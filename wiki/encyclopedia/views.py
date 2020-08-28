@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 from . import util
 
 
@@ -8,5 +8,12 @@ def index(request):
         "entries": util.list_entries()
     })
 
-def test(request):
-    return HttpResponse("This is a test")
+def entry_page(request, entry_name):
+    
+    response = util.get_entry(entry_name)
+
+    if response != None:
+        return HttpResponse(response)
+    else: 
+        return HttpResponseNotFound('<h1>404: Page Not Found :/</h1>')
+
