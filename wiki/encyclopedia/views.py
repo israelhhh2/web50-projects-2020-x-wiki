@@ -2,6 +2,7 @@ from django import forms
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.urls import reverse
+from random import choice
 from . import util
 
 
@@ -32,20 +33,49 @@ def entry_page(request, entry_name):
         return HttpResponseNotFound('<h1>404: Page Not Found :/</h1>')
 
 def new_page(request):
-    
+    message_submission = False
+    # Get all entries into a list
+    entries = []
+    for entry in util.list_entries():
+            entries.append(entry)
+            print(f"{entry} was added to entries array")
+    print(entries)
+
+
     if request.method == "POST":
         form_data = NewEntryForm(request.POST)
+        
+
         if form_data.is_valid():
             title = form_data.cleaned_data['title']
-            textarea = form_data.cleaned_data['entry_text']           
-            util.save_entry(title, textarea)
+            entry_exist = False
+            message_submission = False
+            if title in entries:
+                entry_exist = True
+                return render(request, "entry.html", {
+                    "form": form_data,
+                    "entry_exist": entry_exist
+                })
+            else:
+                textarea = form_data.cleaned_data['entry_text']           
+                util.save_entry(title, textarea)
+                message_submission = True
+
         else:
             return render(request, "entry.html", {
-                "form": form_data
+                "form": form_data,
+                # "entry_exist": entry_exist
             })
     return render(request, "entry.html", {
-        "form": NewEntryForm()
+        "form": NewEntryForm(),
+        "message_submission": message_submission
     })
+
+def random_page(request):
+    entries = util.list_entries()
+    random_entry = choice(entries)
+    return redirect("entry_title", entry_name=random_entry)
+    return HttpResponse(random_entry)
 
 def search(request):
     if request.method == "GET":

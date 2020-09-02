@@ -1,0 +1,26 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    New Entry
+{% endblock %}
+
+{% block body %}
+    <h1>New Entry</h1>
+
+    <form action="{% url 'new_page' %}" method="POST">
+        {% csrf_token %}
+        {{ form }}
+
+        {% if entry_exist%}
+            <h1 class="alert alert-danger" style="margin: 20px 20px 20px 0px">
+                Oopss.. Entry Title already exist
+            </h1>
+        {% elif not entry_exist and message_submission%}
+            <h1 class="alert alert-success" style="margin: 20px 20px 20px 0px">
+                Entry has been added successfully !
+            </h1>
+        {% endif %}
+        <!-- <textarea name="entry_text" id="Title" cols="30" rows="10"></textarea> -->
+        <input type="Submit" value="SAVE">
+    </form>
+{% endblock %}
