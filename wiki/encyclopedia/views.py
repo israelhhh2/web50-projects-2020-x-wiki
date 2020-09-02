@@ -75,7 +75,6 @@ def random_page(request):
     entries = util.list_entries()
     random_entry = choice(entries)
     return redirect("entry_title", entry_name=random_entry)
-    return HttpResponse(random_entry)
 
 def search(request):
     if request.method == "GET":
